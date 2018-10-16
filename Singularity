@@ -16,8 +16,8 @@ Version v0.1
 
     pip install numpy
     pip install scipy
-    pip install dicom
     pip install wheel
+    pip install dicom
     pip install openslide-python
 
     # Get DeepPATH scripts
