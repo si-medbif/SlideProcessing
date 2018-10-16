@@ -4,3 +4,10 @@ Singularity image for preparing file from Asperio (.svs files) for downstream pr
 ---
 ## Test file
 https://sibdm-exome.sgp1.digitaloceanspaces.com/Dumrong/AFB_5081A.svs
+
+---
+## Singularity image
+### Singularity 2.x
+https://sibdm-exome.sgp1.digitaloceanspaces.com/Dumrong/DeepPATH.simg
+### Singularity 3.x
+https://sibdm-exome.sgp1.digitaloceanspaces.com/Dumrong/DeepPATH.sif
