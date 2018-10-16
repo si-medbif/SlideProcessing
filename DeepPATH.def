@@ -11,8 +11,8 @@ Version v0.1
 
 %post
     apt-get update && apt-get install -y --no-install-recommends \
-            python-minimal python-pip git openslide-tools \
-            gcc python-setuptools
+            python-dev python-pip git openslide-tools \
+            build-essential python-setuptools
 
     pip install openslide-python
     pip install dicom
