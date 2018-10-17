@@ -53,8 +53,8 @@ ORIGINAL_SOURCE https://github.com/ncoudray/DeepPATH
     Notes:
         This code can also be used to tile input jpg images: the full path to input images will end in <*jpg">, and you need to set the option -x to the '.jpg' string value and -R to the magnification at which the images were acquired (20.0 for example)
         known bug: the library used fails to deal with images compressed as JPG 2000. These would lead to empty directories
-        Output:
-
+    
+    Output:
         Each slide will have its own folder and inside, one sub-folder per magnification. Inside each magnification folder, tiles are named according to their position within the slide: <x>_<y>.jpeg.
         If the extraction is made from masks defined in xml files, the tiles slides will be saved in folders named after the label of the layer (version 3 of the code only).
 
