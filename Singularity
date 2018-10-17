@@ -14,7 +14,6 @@ Version v0.2
             python-dev python-pip git openslide-tools \
             build-essential python-setuptools
 
-    pip install --upgrade pip
     pip install numpy 
     pip install scipy 
     pip install wheel 
