@@ -15,7 +15,11 @@ Version v0.2
             build-essential python-setuptools
 
     pip install --upgrade pip
-    pip install numpy scipy wheel dicom openslide-python
+    pip install numpy 
+    pip install scipy 
+    pip install wheel 
+    pip install dicom 
+    pip install openslide-python
 
     # Get DeepPATH scripts
     cd /opt && git clone https://github.com/ncoudray/DeepPATH.git
