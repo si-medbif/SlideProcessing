@@ -21,6 +21,6 @@ Version v0.1
     pip install openslide-python
 
     # Get DeepPATH scripts
-    git clone https://github.com/ncoudray/DeepPATH.git
+    cd /opt && git clone https://github.com/ncoudray/DeepPATH.git
     apt-get remove -y python-pip git
     rm -rf /var/lib/apt/lists/*
