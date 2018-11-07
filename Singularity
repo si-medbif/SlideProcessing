@@ -22,7 +22,7 @@ ORIGINAL_SOURCE https://github.com/ncoudray/DeepPATH
     pip install openslide-python
 
     # Get DeepPATH scripts
-    cd /opt && git clone https://github.com/si-medbif/DeepPATH.git
+    cd /opt && git clone https://github.com/si-medbif/DeepPATH.git && git clone https://github.com/si-medbif/SlideProcessing.git
     apt-get remove -y python-pip git
     rm -rf /var/lib/apt/lists/*
 
