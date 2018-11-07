@@ -35,7 +35,6 @@ To process the svs images, go to the parent directory where the slide images or 
 
 In the example below, the slide images are in 'Data/' directory and the output images will be save in 'Results/' directory. Both directories are in the current working directory (i.e. $PWD).
 
-
 ```shell
 $ singularity run -B $PWD --app tile DeepPATH.simg -s 299 -B 25 -e 0 -j 50 -o Results/ "Data/*.svs"
 ```
