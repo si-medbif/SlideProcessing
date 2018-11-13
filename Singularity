@@ -20,7 +20,7 @@ ORIGINAL_SOURCE https://github.com/ncoudray/DeepPATH
     pip install wheel 
     pip install dicom 
     pip install openslide-python
-    pip install tensorflow
+    pip install --no-cache-dir tensorflow
 
     # Get DeepPATH scripts
     cd /opt && git clone https://github.com/si-medbif/DeepPATH.git && git clone https://github.com/si-medbif/SlideProcessing.git
