@@ -11,7 +11,7 @@ https://sibdm-exome.sgp1.digitaloceanspaces.com/Dumrong/AFB_5081A.svs
 ### Pre-requisite
 1. Download the 'DeepPATH.def' file from si-medbif/SlideProcessing
 2. Get `libcudnn7-dev_7.6.0.64-1+cuda10.0_amd64.deb`, `libcudnn7-doc_7.6.0.64-1+cuda10.0_amd64.deb` and `libcudnn7_7.6.0.64-1+cuda10.0_amd64.deb` from [NVIDIA](https://developer.nvidia.com/rdp/form/cudnn-download-survey) (NVIDIA account is required).
-3. Put 'DeepPATH.def' and cudnn files at the build directory
+3. Put 'DeepPATH.def' and libcudnn files in the build directory
 
 ### Singularity 3.x
 Build a writable image first
