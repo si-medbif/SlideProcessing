@@ -1,28 +1,36 @@
 Bootstrap: docker
-From: ubuntu:18.04
+From: nvidia/cuda:10.0-devel-ubuntu18.04
 
 %help
-    Singularity image for DeepPATH
+    Singularity image for DeepPATH build from nvidia-docker for CUDA and CUDNN
     
 
 %labels
 MAINTAINER dumrong.mai@biotec.or.th
-VERSION v0.2
+VERSION v4.0
 ORIGINAL_SOURCE https://github.com/ncoudray/DeepPATH
 
 %post
     apt-get update && apt-get install -y --no-install-recommends \
             python-dev python-pip git openslide-tools \
-            build-essential python-setuptools
+            build-essential python-setuptools \
+            openjdk-8-jdk curl gnupg wget pciutils
+            
+    echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list
+    curl https://bazel.build/bazel-release.pub.gpg | apt-key add -
 
+    apt-get update && apt-get install -y bazel
+    apt-get install --only-upgrade bazel
+    
     pip install numpy 
     pip install scipy 
     pip install wheel 
     pip install dicom 
     pip install openslide-python
-
+    pip install --no-cache-dir tensorflow-gpu
+    
     # Get DeepPATH scripts
-    cd /opt && git clone https://github.com/si-medbif/DeepPATH.git
+    cd /opt && git clone https://github.com/si-medbif/DeepPATH.git && git clone https://github.com/si-medbif/SlideProcessing.git
     apt-get remove -y python-pip git
     rm -rf /var/lib/apt/lists/*
 
