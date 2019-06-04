@@ -6,26 +6,24 @@ Singularity image for preparing file from Asperio (.svs files) for downstream pr
 https://sibdm-exome.sgp1.digitaloceanspaces.com/Dumrong/AFB_5081A.svs
 
 ---
-## Pre-built singularity image
-
-### Singularity 2.x
-https://sibdm-exome.sgp1.digitaloceanspaces.com/Dumrong/DeepPATH.simg
-
----
 ## How to build Singularity image for DeepPATH
 
-Download the 'Singularity' file from si-medbif/SlideProcessing first
+### Pre-requisite
+1. Download the 'DeepPATH.def' file from si-medbif/SlideProcessing
+2. Get `libcudnn7-dev_7.6.0.64-1+cuda10.0_amd64.deb`, `libcudnn7-doc_7.6.0.64-1+cuda10.0_amd64.deb` and `libcudnn7_7.6.0.64-1+cuda10.0_amd64.deb` from [NVIDIA](https://developer.nvidia.com/rdp/form/cudnn-download-survey) (NVIDIA account is required).
+3. Put 'DeepPATH.def' and libcudnn files in the build directory
 
-### Singularity 2.x
-
-```shell
-$ singularity build DeepPATH.simg Singularity
-```
 ### Singularity 3.x
+Build a writable image and manually install cuda 10.0 (You will need to enter language and keyboard options so installation by Singularity defintion file is not yet possible).
 ```shell
-$ cp Singularity DeepPATH.def #Create a defition file identical to 'Singularity' file
-$ singularity build DeepPATH.sif DeepPATH.def
+$ sudo singularity build --sandbox DeepPATH/ DeepPATH.def && sudo singularity run --writable DeepPATH/ apt install -y cuda-10- && sudo singularity run --writable DeepPATH/ rm -rf /var/lib/apt/lists/*
 ```
+
+(Optional) Convert an image to a sif file (a single file image). Exit and run this command in the build directory
+```shell
+$ sudo singularity build DeepPATH.sif DeepPATH/
+```
+
 ---
 ## How to use the image
 
