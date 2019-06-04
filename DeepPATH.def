@@ -1,9 +1,9 @@
 Bootstrap: docker
-From: nvidia/cuda:10.0-devel-ubuntu18.04
+From: ubuntu:18.04
 
 %help
-    Singularity image for DeepPATH build from nvidia-docker for CUDA and CUDNN
-    
+    Singularity image for DeepPATH with bazel, CUDA and CUDNN ready
+
 
 %labels
 MAINTAINER dumrong.mai@biotec.or.th
@@ -21,9 +21,6 @@ ORIGINAL_SOURCE https://github.com/ncoudray/DeepPATH
             build-essential python-setuptools \
             openjdk-8-jdk curl gnupg wget
 
-    echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list
-    curl https://bazel.build/bazel-release.pub.gpg | apt-key add -
-
     wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/cuda-repo-ubuntu1804_10.0.130-1_amd64.deb
     dpkg -i cuda-repo-ubuntu1804_10.0.130-1_amd64.deb
     apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub
@@ -32,6 +29,9 @@ ORIGINAL_SOURCE https://github.com/ncoudray/DeepPATH
     dpkg -i /opt/libcudnn7_7.6.0.64-1+cuda10.0_amd64.deb
     dpkg -i /opt/libcudnn7-dev_7.6.0.64-1+cuda10.0_amd64.deb
     dpkg -i /opt/libcudnn7-doc_7.6.0.64-1+cuda10.0_amd64.deb
+
+    echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list
+    curl https://bazel.build/bazel-release.pub.gpg | apt-key add -
 
     apt-get update && apt-get install -y bazel
     apt-get install --only-upgrade bazel
@@ -46,9 +46,17 @@ ORIGINAL_SOURCE https://github.com/ncoudray/DeepPATH
 
     # Get DeepPATH scripts
     cd /opt && git clone https://github.com/si-medbif/DeepPATH.git && git clone https://github.com/si-medbif/SlideProcessing.git
-    rm libcudnn7_*
+
+    # Bazel build
+    cd /opt/DeepPATH/DeepPATH_code/01_training/xClasses/
+    bazel build inception/imagenet_train
+
+    #Clean up
+    
+    rm /opt/libcudnn7_*
     apt-get remove -y python-pip git
-    rm -rf /var/lib/apt/lists/*
+    
+    #rm -rf /var/lib/apt/lists/*
    
 
 # =======================
