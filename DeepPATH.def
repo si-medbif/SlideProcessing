@@ -55,10 +55,7 @@ ORIGINAL_SOURCE https://github.com/ncoudray/DeepPATH
     
     rm /opt/libcudnn7_*
     apt-get remove -y python-pip git
-    
-    #rm -rf /var/lib/apt/lists/*
    
-
 # =======================
 # 0.1 Tile the svs slide images
 # =======================
