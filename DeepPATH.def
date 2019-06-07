@@ -45,7 +45,7 @@ ORIGINAL_SOURCE https://github.com/ncoudray/DeepPATH
 
 
     # Get DeepPATH scripts
-    cd /opt && git https://github.com/ncoudray/DeepPATH.git && git clone https://github.com/si-medbif/SlideProcessing.git
+    cd /opt && git clone https://github.com/ncoudray/DeepPATH.git && git clone https://github.com/si-medbif/SlideProcessing.git
 
     # Bazel build
     cd /opt/DeepPATH/DeepPATH_code/01_training/xClasses/
