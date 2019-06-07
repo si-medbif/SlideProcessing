@@ -48,8 +48,8 @@ ORIGINAL_SOURCE https://github.com/ncoudray/DeepPATH
     cd /opt && git clone https://github.com/ncoudray/DeepPATH.git && git clone https://github.com/si-medbif/SlideProcessing.git
 
     # Bazel build
-    cd /opt/DeepPATH/DeepPATH_code/01_training/xClasses/
-    bazel build inception/imagenet_train
+    #cd /opt/DeepPATH/DeepPATH_code/01_training/xClasses/
+    #bazel build inception/imagenet_train
 
     #Clean up
     
@@ -93,3 +93,34 @@ Output:
     
 %apprun tile
     python $TILE_PY "$@"
+    
+# =======================
+# 0.2 flip or rotate images
+# =======================
+
+%appenv flip
+    FLIP_PY=/opt/SlideProcessing/Scripts/image_flip.py
+    export FLIP_PY
+
+%apphelp flip
+
+Mandatory parameters:
+
+    -i --image_path
+                Path and name of the image file.
+
+    -o --option
+                Method for flipping or rotating the image file:
+                1 = Flip horizontally (default option)  
+                2= Flip vertically
+                3 = Rotate 90 deg
+                4 = Rotate 180 deg
+                5 = Rotate 270 deg
+                
+    -s --saved_location
+                Path and name of the file to be saved as.
+
+    
+%apprun flip
+    python $FLIP_PY "$@"
+
