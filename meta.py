@@ -10,7 +10,7 @@ def readGDC(filename, header = True):
         for line in f:
             lst = line.rstrip().split('\t')
             getSVS(line[1].strip())
-            tile(line[1].strip())
+            tiling(line[1].strip())
 
 #Get SVS from gcloud
 def getSVS(fname, bucket = 'nci-test'):
