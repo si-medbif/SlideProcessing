@@ -24,10 +24,13 @@ def readGDC(filename, header = True):
             
             Parallel(n_jobs=-1, verbose=1, backend="threading")(map(delayed(os.system), cmd_list))
             
-            Parallel(n_jobs=-1, verbose=1, backend="threading")(map(delayed(os.system), cmd_list2))
+            for cmd in cmd_list2:
+                print(cmd)
+                os.system(cmd)
+            #Parallel(n_jobs=-1, verbose=1, backend="threading")(map(delayed(os.system), cmd_list2))
             
-            os.system("rm -rf ~/Results")
-            os.system("rm " + fname)
+            #os.system("rm -rf ~/Results")
+            #os.system("rm " + fname)
 
 #Get SVS from gcloud
 def getSVS(fname, bucket = 'nci-test'):
@@ -73,16 +76,15 @@ def tar_gz_prep(path):
     cmd_list = []
     cmd_list2 = []
     npath = path.rstrip("/")
-    gz_list = ["","FH_","FV_", "R90_","R180_","R270_"]
-    for prefix in gz_list:
-        nnpath = prefix + npath
-        cmd = "tar -czf Results/%s.tar.gz Results/%s/" % (nnpath, nnpath)
-        cmd_list.append(cmd)
-        cmd2 = "singularity run --app upload gcloud.sif -b nci-test -c Result/%s.tar.gz -d tiles/%s.tar.gz"  % (nnpath, nnpath)
-        cmd_list2.append(cmd2)
+    lst = os.listdir("Results")
+    for l in lst:
+        if npath in l and "dzi" not in l:
+            cmd = "tar -czf Results/%s.tar.gz Results/%s/" % (l, l)
+            cmd_list.append(cmd)
+            cmd2 = "singularity run --app upload gcloud.sif -b nci-test -c Results/%s.tar.gz -d tiles/%s.tar.gz"  % (l, l)
+            cmd_list2.append(cmd2)
+
     return(cmd_list, cmd_list2)
-
-
 
 def main(args):
     readGDC(args.file_name)
