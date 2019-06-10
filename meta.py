@@ -81,7 +81,7 @@ def tar_gz_prep(path):
         if npath in l and "dzi" not in l:
             cmd = "tar -czf Results/%s.tar.gz Results/%s/" % (l, l)
             cmd_list.append(cmd)
-            cmd2 = "singularity run --app upload gcloud.sif -b nci-test -c Results/%s.tar.gz -d tiles/%s.tar.gz"  % (l, l)
+            cmd2 = "singularity run --app upload gcloud.sif -b nci-test -c Results/%s.tar.gz -d tiles/"  %  l
             cmd_list2.append(cmd2)
 
     return(cmd_list, cmd_list2)
