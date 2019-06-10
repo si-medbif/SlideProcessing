@@ -11,7 +11,7 @@ def readGDC(filename, header = True):
             lst = line.rstrip().split('\t')
             fname = lst[1].strip()
             path = fname.replace('.svs','_files')
-            print(path)
+            #print(path)
             getSVS(fname)
             tiling(fname)
             cmd_list = rotate_all_prep(path)
@@ -19,13 +19,13 @@ def readGDC(filename, header = True):
 #Get SVS from gcloud
 def getSVS(fname, bucket = 'nci-test'):
     cmd = "singularity run --app download gcloud.sif -f %s -b %s" % (fname, bucket)
-    print(cmd)
+    #print(cmd)
     os.system(cmd)
     
 #Tiling SVS file    
 def tiling(svs):
     cmd = 'singularity run --app tile DeepPATHv4.sif -s 512 -B 50 -e 0 -j 32 -M 20 -o Results/ "%s"' % svs
-    print(cmd)
+    #print(cmd)
     os.system(cmd)
 
 #Rotate tile files
@@ -44,7 +44,7 @@ def rotate_all_prep(path):
             
     for root, dirs, files in os.walk("Results/" + path):
         for file in files:
-            print(file)
+            #print(file)
             if file.endswith(".jpeg"):
                 fl = os.path.join(root, file)
                 for j in range(1,6):
