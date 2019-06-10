@@ -11,6 +11,7 @@ def readGDC(filename, header = True):
             lst = line.rstrip().split('\t')
             fname = lst[1].strip()
             path = fname.replace('.svs','_files')
+            print(path)
             getSVS(fname)
             tiling(fname)
             rotate_all(path)
@@ -40,13 +41,14 @@ def rotate_all(path):
         if not os.path.exists("Results/"+ i+path):
             os.makedirs("Results/"+i+path+"/20.0/")
             
-    for root, dirs, files in os.walk(path):
+    for root, dirs, files in os.walk("Results/" + path):
         for file in files:
+            print(file)
             if file.endswith(".jpeg"):
                 fl = os.path.join(root, file)
                 for j in range(1,6):
                     npath = "Results/" + rotate_dict.get(j) + path +"/20.0/"
-                    cmd = 'singularity run --app flip DeepPATHv4.sif -i %s -o %s -s %s' % (fl,j,npath)
+                    cmd = 'singularity run --app flip DeepPATHv4.sif -i %s -o %s -s %s' % (fl,j,npath + file)
                     print(cmd)
                     os.system(cmd)
             
