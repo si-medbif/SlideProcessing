@@ -12,7 +12,7 @@ def readGDC(filename, header = True):
             lst = line.rstrip().split('\t')
             fname = lst[1].strip()
             path = fname.replace('.svs','_files')
-            #print(path)
+         
             getSVS(fname)
             tiling(fname)
             
@@ -24,24 +24,22 @@ def readGDC(filename, header = True):
             
             Parallel(n_jobs=-1, verbose=1, backend="threading")(map(delayed(os.system), cmd_list))
             
-            for cmd in cmd_list2:
-                print(cmd)
-                os.system(cmd)
-            #Parallel(n_jobs=-1, verbose=1, backend="threading")(map(delayed(os.system), cmd_list2))
+
+            Parallel(n_jobs=-1, verbose=1, backend="threading")(map(delayed(os.system), cmd_list2))
             
-            #os.system("rm -rf ~/Results")
-            #os.system("rm " + fname)
+            os.system("rm -rf ~/Results")
+            os.system("rm " + fname)
 
 #Get SVS from gcloud
 def getSVS(fname, bucket = 'nci-test'):
     cmd = "singularity run --app download gcloud.sif -f %s -b %s" % (fname, bucket)
-    #print(cmd)
+
     os.system(cmd)
     
 #Tiling SVS file    
 def tiling(svs):
     cmd = 'singularity run --app tile DeepPATHv4.sif -s 512 -B 50 -e 0 -j 32 -M 20 -o Results/ "%s"' % svs
-    #print(cmd)
+
     os.system(cmd)
 
 #Rotate tile files commands
@@ -66,8 +64,6 @@ def rotate_all_prep(path):
                 for j in range(1,6):
                     npath = "Results/" + rotate_dict.get(j) + path +"/20.0/"
                     cmd = 'singularity run --app flip DeepPATHv4.sif -i %s -o %s -s %s' % (fl,j,npath + file)
-                    #print(cmd)
-                    #os.system(cmd)
                     cmd_list.append(cmd)
     return(cmd_list)
 
