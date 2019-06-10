@@ -7,9 +7,9 @@ def readGDC(filename, header = True):
     with open(filename, 'r') as f:
         if header:
             f.readline()
-        for i in f:
-            print(i)
-            getSVS(i[1].strip())
+        for line in f:
+            lst = line.rstrip().split('\t')
+            getSVS(line[1].strip())
 
 #Get SVS from gcloud
 def getSVS(fname, bucket = 'nci-test'):
