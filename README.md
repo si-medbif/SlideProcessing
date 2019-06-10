@@ -16,7 +16,11 @@ https://sibdm-exome.sgp1.digitaloceanspaces.com/Dumrong/AFB_5081A.svs
 ### Singularity 3.x
 Build a writable image and manually install cuda 10.0 (You will need to enter language and keyboard options so installation by Singularity defintion file is not yet possible).
 ```shell
-$ sudo singularity build --sandbox DeepPATH/ DeepPATH.def && sudo singularity run --writable DeepPATH/ apt install -y cuda-10-0 && sudo singularity run --writable DeepPATH/ rm -rf /var/lib/apt/lists/*
+$ sudo singularity build --sandbox DeepPATH/ DeepPATH.def && sudo singularity run --writable DeepPATH/ apt install -y cuda-10-0 
+```
+Clean up (Not sure whether this will destabilize the image)
+```shell
+$ sudo singularity run --writable DeepPATH/ rm -rf /var/lib/apt/lists/*
 ```
 
 (Optional) Convert an image to a sif file (a single file image). Exit and run this command in the build directory
