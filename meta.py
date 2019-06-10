@@ -9,7 +9,13 @@ def readGDC(filename, header = True):
             f.readline()
         for i in f:
             print(i)
+            getSVS(i[1].strip())
 
+#Get SVS from gcloud
+def getSVS(fname, bucket = 'nci-test'):
+    cmd = "singularity run --app download gcloud.sif -f %s -b %s" % (fname, bucket)
+    os.system(cmd)
+            
 def main(args):
     readGDC(args.file_name)
 
