@@ -1,6 +1,6 @@
 import os
 import argparse
-
+from joblib import Parallel, delayed
 
 #Read GDC sample sheet (With header)
 def readGDC(filename, header = True):
@@ -14,8 +14,8 @@ def readGDC(filename, header = True):
             print(path)
             getSVS(fname)
             tiling(fname)
-            rotate_all(path)
-
+            cmd_list = rotate_all_prep(path)
+            Parallel(n_jobs=-2, verbose=1, backend="threading")(map(delayed(os.system), cmd_list))
 #Get SVS from gcloud
 def getSVS(fname, bucket = 'nci-test'):
     cmd = "singularity run --app download gcloud.sif -f %s -b %s" % (fname, bucket)
@@ -29,7 +29,8 @@ def tiling(svs):
     os.system(cmd)
 
 #Rotate tile files
-def rotate_all(path):
+def rotate_all_prep(path):
+    cmd_list = []
     rotate_dict ={
         1:"FH_",
         2:"FV_",
@@ -49,9 +50,11 @@ def rotate_all(path):
                 for j in range(1,6):
                     npath = "Results/" + rotate_dict.get(j) + path +"/20.0/"
                     cmd = 'singularity run --app flip DeepPATHv4.sif -i %s -o %s -s %s' % (fl,j,npath + file)
-                    print(cmd)
-                    os.system(cmd)
-            
+                    #print(cmd)
+                    #os.system(cmd)
+                    cmd_list.append(cmd)
+    return(cmd_list)
+
 def main(args):
     readGDC(args.file_name)
 
