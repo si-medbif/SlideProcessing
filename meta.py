@@ -14,6 +14,7 @@ def readGDC(filename, header = True):
 #Get SVS from gcloud
 def getSVS(fname, bucket = 'nci-test'):
     cmd = "singularity run --app download gcloud.sif -f %s -b %s" % (fname, bucket)
+    print(cmd)
     os.system(cmd)
             
 def main(args):
