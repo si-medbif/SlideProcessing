@@ -1,6 +1,7 @@
 import os
 import argparse
 from joblib import Parallel, delayed
+import re
 
 #Read GDC sample sheet (With header)
 def readGDC(filename, header = True):
@@ -14,8 +15,20 @@ def readGDC(filename, header = True):
             #print(path)
             getSVS(fname)
             tiling(fname)
-            cmd_list = rotate_all_prep(path)
-            Parallel(n_jobs=-2, verbose=1, backend="threading")(map(delayed(os.system), cmd_list))
+            
+            if re.search("normal",lst[7],re.IGNORECASE):
+                cmd_list = rotate_all_prep(path)
+                Parallel(n_jobs=-1, verbose=1, backend="threading")(map(delayed(os.system), cmd_list))
+            
+            cmd_list,cmd_list2 = tar_gz_prep(path)
+            
+            Parallel(n_jobs=-1, verbose=1, backend="threading")(map(delayed(os.system), cmd_list))
+            
+            Parallel(n_jobs=-1, verbose=1, backend="threading")(map(delayed(os.system), cmd_list2))
+            
+            os.system("rm -rf ~/Results")
+            os.system("rm " + fname)
+
 #Get SVS from gcloud
 def getSVS(fname, bucket = 'nci-test'):
     cmd = "singularity run --app download gcloud.sif -f %s -b %s" % (fname, bucket)
@@ -28,7 +41,7 @@ def tiling(svs):
     #print(cmd)
     os.system(cmd)
 
-#Rotate tile files
+#Rotate tile files commands
 def rotate_all_prep(path):
     cmd_list = []
     rotate_dict ={
@@ -54,6 +67,22 @@ def rotate_all_prep(path):
                     #os.system(cmd)
                     cmd_list.append(cmd)
     return(cmd_list)
+
+#Create compressed files commands
+def tar_gz_prep(path):
+    cmd_list = []
+    cmd_list2 = []
+    npath = path.rstrip("/")
+    gz_list = ["","FH_","FV_", "R90_","R180_","R270_"]
+    for prefix in gz_list:
+        nnpath = prefix + npath
+        cmd = "tar -czf Results/%s.tar.gz Results/%s/" % (nnpath, nnpath)
+        cmd_list.append(cmd)
+        cmd2 = "singularity run --app upload gcloud.sif -b nci-test -c Result/%s.tar.gz -d tiles/%s.tar.gz"  % (nnpath, nnpath)
+        cmd_list2.append(cmd2)
+    return(cmd_list, cmd_list2)
+
+
 
 def main(args):
     readGDC(args.file_name)
