@@ -9,8 +9,8 @@ def readGDC(filename, header = True):
             f.readline()
         for line in f:
             lst = line.rstrip().split('\t')
-            getSVS(line[1].strip())
-            tiling(line[1].strip())
+            getSVS(lst[1].strip())
+            tiling(lst[1].strip())
 
 #Get SVS from gcloud
 def getSVS(fname, bucket = 'nci-test'):
@@ -20,6 +20,7 @@ def getSVS(fname, bucket = 'nci-test'):
 def tiling(svs):
     cmd = 'singularity run --app tile DeepPATHv4.sif -s 512 -B 50 -e 0 -j 32 -M 20 -o Results/ "%s"' % svs
     print(cmd)
+    #os.system(cmd)
             
 def main(args):
     readGDC(args.file_name)
