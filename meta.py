@@ -24,3 +24,6 @@ if __name__ == '__main__':
         action="store",
         help="Name and path of the sample sheet file"
     )
+    
+    args = parser.parse_args()
+    main(args)
