@@ -3,7 +3,8 @@
 import argparse
 from google.cloud import storage
 import os
-import 
+from joblib import Parallel, delayed
+import itertools
 
 def list_blobs_with_prefix(bucket_name, prefix, delimiter=None):
     """Lists all the blobs in the bucket that begin with the prefix.
@@ -24,3 +25,38 @@ def list_blobs_with_prefix(bucket_name, prefix, delimiter=None):
 
     blobs = bucket.list_blobs(prefix=prefix, delimiter=delimiter)
     result = []
+    for blob in blobs:
+        result.append(blob.name)
+    return(result)
+
+def cmd_prepare(bucket,target):
+    cmd = "singularity run --app download gcloud.sif -b %s -f %s -d %s && tar -xzf %s && rm %s" % (bucket,target,target,target,target)
+    return(cmd)
+
+def main(args):
+    lst = list_blobs_with_prefix(args.bucket,args.folder)
+    cmd_list = map(cmd_prepare,itertools.repeat(args.bucket, len(lst)), lst )
+    
+    Parallel(n_jobs=-1, verbose=1, backend="threading")(map(delayed(os.system), cmd_list))
+
+
+if __name__ == '__main__':
+    
+    parser = argparse.ArgumentParser()
+    
+    parser.add_argument(
+        "-f",
+        "--folder",
+        action="store",
+        help="Name of folder to be downloaded"
+    )
+    
+    parser.add_argument(
+        "-b",
+        "--bucket",
+        action="store",
+        help="Name of the bucket"
+    )
+    
+    args = parser.parse_args()
+    main(args)
