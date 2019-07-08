@@ -4,43 +4,59 @@ from joblib import Parallel, delayed
 import re
 
 #Read GDC sample sheet (With header)
-def readGDC(filename, header = True):
+def readGDC(filename, inpath, outpath, header = True):
     with open(filename, 'r') as f:
         if header:
             f.readline()
         for line in f:
             lst = line.rstrip().split('\t')
-            fname = lst[1].strip()
-            path = fname.replace('.svs','_files')
-         
-            getSVS(fname)
-            tiling(fname)
+            fname = lst[0].strip()
+            path = os.path.abspath(inpath)+"/"+ fname+"_files" 
             
-            if re.search("normal",lst[7],re.IGNORECASE):
-                cmd_list = rotate_all_prep(path)
-                Parallel(n_jobs=-1, verbose=1, backend="threading")(map(delayed(os.system), cmd_list))
+            print(cp_list(fname,inpath,outpath,lst[1],lst[2]))
+            break
             
-            cmd_list,cmd_list2 = tar_gz_prep(path)
+def cp_list(fname,inpath,outpath,label,group):
+    lst = []
+    path = os.path.abspath(inpath)+"/"+ fname+"_files" 
+    for (dirpath, dirnames, filenames) in os.walk(path):
+        for ff in filenames:
+            cmd = "cp " + dirpath+"/"+ff + " " + os.path.abspath(outpath)+"/"+label.strip()+"/"+group.strip()+fname+"_"+ff
+            lst.append(cmd)
+    return(lst)
+def rotate_list(fname,inpath,outpath,label,group,nrotate):
+    lst = []
+    rotate_dict ={
+        1:"FH_",
+        2:"FV_",
+        3:"R90_",
+        4:"R180_",
+        5:"R270_"
+    }
+    if nrotate <= 1:
+        return(lst)
+    path = os.path.abspath(inpath)+"/"+ fname+"_files" 
+    for (dirpath, dirnames, filenames) in os.walk(path):
+        for ff in filenames:
             
-            Parallel(n_jobs=-1, verbose=1, backend="threading")(map(delayed(os.system), cmd_list))
+            
+            #getSVS(fname)
+            #tiling(fname)
+            
+           # if re.search("normal",lst[7],re.IGNORECASE):
+           #     cmd_list = rotate_all_prep(path)
+           #     Parallel(n_jobs=-1, verbose=1, backend="threading")(map(delayed(os.system), cmd_list))
+            
+           # cmd_list,cmd_list2 = tar_gz_prep(path)
+            
+           # Parallel(n_jobs=-1, verbose=1, backend="threading")(map(delayed(os.system), cmd_list))
             
 
-            Parallel(n_jobs=-1, verbose=1, backend="threading")(map(delayed(os.system), cmd_list2))
+           # Parallel(n_jobs=-1, verbose=1, backend="threading")(map(delayed(os.system), cmd_list2))
             
-            os.system("rm -rf ~/Results")
-            os.system("rm " + fname)
+           # os.system("rm -rf ~/Results")
+           # os.system("rm " + fname)
 
-#Get SVS from gcloud
-def getSVS(fname, bucket = 'nci-test'):
-    cmd = "singularity run --app download gcloud.sif -f %s -b %s" % (fname, bucket)
-
-    os.system(cmd)
-    
-#Tiling SVS file    
-def tiling(svs):
-    cmd = 'singularity run --app tile DeepPATHv4.sif -s 512 -B 50 -e 0 -j 32 -M 20 -o Results/ "%s"' % svs
-
-    os.system(cmd)
 
 #Rotate tile files commands
 def rotate_all_prep(path):
@@ -68,22 +84,22 @@ def rotate_all_prep(path):
     return(cmd_list)
 
 #Create compressed files commands
-def tar_gz_prep(path):
-    cmd_list = []
-    cmd_list2 = []
-    npath = path.rstrip("/")
-    lst = os.listdir("Results")
-    for l in lst:
-        if npath in l and "dzi" not in l:
-            cmd = "tar -czf Results/%s.tar.gz Results/%s/" % (l, l)
-            cmd_list.append(cmd)
-            cmd2 = "singularity run --app upload gcloud.sif -b nci-test -c Results/%s.tar.gz -d tiles/"  %  l
-            cmd_list2.append(cmd2)
+#def tar_gz_prep(path):
+#    cmd_list = []
+#    cmd_list2 = []
+#    npath = path.rstrip("/")
+#    lst = os.listdir("Results")
+#    for l in lst:
+#        if npath in l and "dzi" not in l:
+#            cmd = "tar -czf Results/%s.tar.gz Results/%s/" % (l, l)
+#            cmd_list.append(cmd)
+#            cmd2 = "singularity run --app upload gcloud.sif -b nci-test -c Results/%s.tar.gz -d tiles/"  %  l
+#            cmd_list2.append(cmd2)
 
-    return(cmd_list, cmd_list2)
+#    return(cmd_list, cmd_list2)
 
 def main(args):
-    readGDC(args.file_name)
+    readGDC(args.file_name, args.input_path, args.output_path, header = False)
 
   
 if __name__ == '__main__':
@@ -95,6 +111,20 @@ if __name__ == '__main__':
         "--file_name",
         action="store",
         help="Name and path of the sample sheet file"
+    )
+    
+    parser.add_argument(
+        "-i",
+        "--input_path",
+        action="store",
+        help="Name and path of the tile files"
+    )
+    
+    parser.add_argument(
+        "-o",
+        "--output_path",
+        action="store",
+        help="Name and path of the destinateion for sorted tile files. The destination must have subdirectories of labels (e.g Dest/Label1/ Dest/Label2/"
     )
     
     args = parser.parse_args()
