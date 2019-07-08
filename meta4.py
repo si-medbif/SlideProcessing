@@ -2,6 +2,7 @@ import os
 import argparse
 from joblib import Parallel, delayed
 import re
+import random
 
 #Read GDC sample sheet (With header)
 def readGDC(filename, inpath, outpath, header = True):
@@ -9,6 +10,7 @@ def readGDC(filename, inpath, outpath, header = True):
         if header:
             f.readline()
         for line in f:
+            #print(line)
             lst = line.rstrip().split('\t')
             fname = lst[0].strip()
             path = os.path.abspath(inpath)+"/"+ fname+"_files" 
@@ -17,6 +19,9 @@ def readGDC(filename, inpath, outpath, header = True):
             ROTATE = (rotate_list(fname,inpath,outpath,lst[1],lst[2],lst[3]))
             Parallel(n_jobs=-1, verbose=1, backend="threading")(map(delayed(os.system), CP))
             Parallel(n_jobs=-1, verbose=1, backend="threading")(map(delayed(os.system), ROTATE))
+            #print(CP)
+            #print(ROTATE)
+            #break
             
 def cp_list(fname,inpath,outpath,label,group):
     lst = []
@@ -41,7 +46,7 @@ def rotate_list(fname,inpath,outpath,label,group,nrotate):
     path = os.path.abspath(inpath)+"/"+ fname+"_files" 
     for (dirpath, dirnames, filenames) in os.walk(path):
         for ff in filenames:
-            for j in range(1,int(nrotate)):
+            for j in random.sample(rotate_dict.keys(),int(nrotate)-1):
                 fl = dirpath+"/"+ff
                 npath = os.path.abspath(outpath)+"/"+label.strip()+"/"+group.strip()+rotate_dict.get(j)+fname+"_"+ff
                 cmd = 'singularity run --app flip DeepPATHv4.sif -i %s -o %s -s %s' % (fl,j,npath)
