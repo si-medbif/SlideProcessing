@@ -13,8 +13,10 @@ def readGDC(filename, inpath, outpath, header = True):
             fname = lst[0].strip()
             path = os.path.abspath(inpath)+"/"+ fname+"_files" 
             
-            print(cp_list(fname,inpath,outpath,lst[1],lst[2]))
-            break
+            CP = (cp_list(fname,inpath,outpath,lst[1],lst[2]))
+            ROTATE = (rotate_list(fname,inpath,outpath,lst[1],lst[2],lst[3]))
+            Parallel(n_jobs=-1, verbose=1, backend="threading")(map(delayed(os.system), CP))
+            Parallel(n_jobs=-1, verbose=1, backend="threading")(map(delayed(os.system), ROTATE))
             
 def cp_list(fname,inpath,outpath,label,group):
     lst = []
@@ -24,6 +26,7 @@ def cp_list(fname,inpath,outpath,label,group):
             cmd = "cp " + dirpath+"/"+ff + " " + os.path.abspath(outpath)+"/"+label.strip()+"/"+group.strip()+fname+"_"+ff
             lst.append(cmd)
     return(lst)
+
 def rotate_list(fname,inpath,outpath,label,group,nrotate):
     lst = []
     rotate_dict ={
@@ -33,71 +36,18 @@ def rotate_list(fname,inpath,outpath,label,group,nrotate):
         4:"R180_",
         5:"R270_"
     }
-    if nrotate <= 1:
+    if int(nrotate) <= 1:
         return(lst)
     path = os.path.abspath(inpath)+"/"+ fname+"_files" 
     for (dirpath, dirnames, filenames) in os.walk(path):
         for ff in filenames:
+            for j in range(1,int(nrotate)):
+                fl = dirpath+"/"+ff
+                npath = os.path.abspath(outpath)+"/"+label.strip()+"/"+group.strip()+rotate_dict.get(j)+fname+"_"+ff
+                cmd = 'singularity run --app flip DeepPATHv4.sif -i %s -o %s -s %s' % (fl,j,npath)
+                lst.append(cmd)
+    return(lst)
             
-            
-            #getSVS(fname)
-            #tiling(fname)
-            
-           # if re.search("normal",lst[7],re.IGNORECASE):
-           #     cmd_list = rotate_all_prep(path)
-           #     Parallel(n_jobs=-1, verbose=1, backend="threading")(map(delayed(os.system), cmd_list))
-            
-           # cmd_list,cmd_list2 = tar_gz_prep(path)
-            
-           # Parallel(n_jobs=-1, verbose=1, backend="threading")(map(delayed(os.system), cmd_list))
-            
-
-           # Parallel(n_jobs=-1, verbose=1, backend="threading")(map(delayed(os.system), cmd_list2))
-            
-           # os.system("rm -rf ~/Results")
-           # os.system("rm " + fname)
-
-
-#Rotate tile files commands
-def rotate_all_prep(path):
-    cmd_list = []
-    rotate_dict ={
-        1:"FH_",
-        2:"FV_",
-        3:"R90_",
-        4:"R180_",
-        5:"R270_"
-    }
-    for i in rotate_dict.values():
-        if not os.path.exists("Results/"+ i+path):
-            os.makedirs("Results/"+i+path+"/20.0/")
-            
-    for root, dirs, files in os.walk("Results/" + path):
-        for file in files:
-            #print(file)
-            if file.endswith(".jpeg"):
-                fl = os.path.join(root, file)
-                for j in range(1,6):
-                    npath = "Results/" + rotate_dict.get(j) + path +"/20.0/"
-                    cmd = 'singularity run --app flip DeepPATHv4.sif -i %s -o %s -s %s' % (fl,j,npath + file)
-                    cmd_list.append(cmd)
-    return(cmd_list)
-
-#Create compressed files commands
-#def tar_gz_prep(path):
-#    cmd_list = []
-#    cmd_list2 = []
-#    npath = path.rstrip("/")
-#    lst = os.listdir("Results")
-#    for l in lst:
-#        if npath in l and "dzi" not in l:
-#            cmd = "tar -czf Results/%s.tar.gz Results/%s/" % (l, l)
-#            cmd_list.append(cmd)
-#            cmd2 = "singularity run --app upload gcloud.sif -b nci-test -c Results/%s.tar.gz -d tiles/"  %  l
-#            cmd_list2.append(cmd2)
-
-#    return(cmd_list, cmd_list2)
-
 def main(args):
     readGDC(args.file_name, args.input_path, args.output_path, header = False)
 
