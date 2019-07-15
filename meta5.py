@@ -47,8 +47,9 @@ def main(args):
         print("type_eval must be test_','valid_' or 'train_'.")
         return
     lst = list_chkpt(args.checkpoint_dir)
-    t = tmp_chkpt(lst[0],args.checkpoint_dir,args.output_dir)
-    run_eval(args.output_dir+"/tmp",t,args.data_dir,args.type_eval)
+    for l in lst:
+        t = tmp_chkpt(l,args.checkpoint_dir,args.output_dir)
+        run_eval(args.output_dir+"/tmp",t,args.data_dir,args.type_eval)
     
 if __name__ == '__main__':
     
