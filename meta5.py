@@ -49,7 +49,7 @@ def main(args):
     lst = list_chkpt(args.checkpoint_dir)
     for l in lst:
         t = tmp_chkpt(l,args.checkpoint_dir,args.output_dir)
-        run_eval(args.output_dir+"/tmp",t,args.data_dir,args.type_eval)
+        run_eval(args.output_dir+"/tmp",t,args.data_dir,args.label_file,args.type_eval,args.batch_size)
     
 if __name__ == '__main__':
     
