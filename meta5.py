@@ -2,6 +2,8 @@ import os
 import argparse
 #from joblib import Parallel, delayed
 import re
+import shlex
+import subprocess
 #import random
 
 def list_chkpt(checkpoint_dir):
@@ -39,7 +41,8 @@ def run_eval(tmp_dir,chk_dir,data_dir,label_file,type_eval,batch_size):
     cmd = f"""python3 DeepPATH/DeepPATH_code/02_testing/xClasses/nc_imagenet_eval.py --checkpoint_dir='{os.path.abspath(tmp_dir)}' --eval_dir='{os.path.abspath(chk_dir)}' --data_dir='{os.path.abspath(data_dir)}'  --batch_size={batch_size}  --run_once --ImageSet_basename={type_eval} --ClassNumber=2 --mode='0_softmax'  --TVmode='test'"""
     os.system(cmd)
     cmd2 = f"""python3 DeepPATH/DeepPATH_code/03_postprocessing/0h_ROC_MultiOutput_BootStrap.py --file_stats='{os.path.abspath(chk_dir)}/out_filename_Stats.txt' --output_dir='{os.path.abspath(chk_dir)}' --labels_names='{os.path.abspath(label_file)}'"""
-    os.system(cmd2)
+    subprocess.Popen(shlex.split(cmd2),shell=False,stdin=None,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+    #os.system(cmd2)
     os.system(f'''rm {os.path.abspath(tmp_dir)}/*''')
 
 def main(args):
