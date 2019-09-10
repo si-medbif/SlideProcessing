@@ -37,14 +37,6 @@ def rotate_list(fname,inpath,outpath,label,group,nrotate):
                 lst.append(cmd)
     return(lst)
 
-def getOriFiles(path_to_file):
-    ulist = os.walk(path_to_file)
-    return [ os.path.join(path,f) for path, subdirs, files in ulist for f in files]
-
-def getFiles(path_to_file):
-    ulist = os.walk(path_to_file)
-    return [files for  path, subdirs, files in ulist][-1]
-
 def main(args):
     with open(os.path.realpath(args.listfile), 'r') as f:
         for line in f:
