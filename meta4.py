@@ -5,7 +5,7 @@ import re
 import random
 
 #Read GDC sample sheet (With header)
-def readGDC(filename, inpath, outpath, header = True, job):
+def readGDC(filename, inpath, outpath, job, header = True):
     job = int(job)
     with open(filename, 'r') as f:
         if header:
