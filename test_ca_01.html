@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>test_ca_10</title>
+    <style>
+* {
+  box-sizing: border-box;
+}
+
+/* Create two unequal columns that floats next to each other */
+.column {
+  float: left;
+  padding: 10px;
+  height: 300px; /* Should be removed. Only for demonstration */
+}
+
+.left {
+  width: 33%;
+}
+
+.right {
+  width: 64%;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+</style>
+</head>
+<body>
+    <h2>test_ca_10</h2>  
+
+    <div class="row">
+  <div class="column left" >
+    <form>
+    <h2>CA Prediction</h2>
+
+    <img style="max-width: 400px" src="/images/BigRaw_test_S11_A22-1_HE_CA_files.jpg" id="img1"  alt="Prediction"> 
+
+  <br/>
+Zoom: <!--<input type="number" step="any" id="z" name="z" value="10" /><br/>-->
+<input type="radio" id=zoom1 name="zoom" value="5"><label for="zoom1">5x</label>
+<input type="radio" id=zoom2 name="zoom" value="10" checked="checked"><label for="zoom2">10x</label>
+<input type="radio" id=zoom3 name="zoom" value="20"><label for="zoom3">20x</label>
+<input type="radio" id=zoom4 name="zoom" value="40"><label for="zoom4">40x</label><br/><br/>
+X <input type="number" step="0.01" id="x" name="x" value = "0"/><br/>
+Y <input type="number" step="0.01" id="y" name="y" value = "0"/><br/><br/>
+ <button type="button" id="button1">Zoom!</button> <br/>
+ <h3><a href="index.html">Back to home page</a></h3>
+ <!--
+ <h2>Slider with ordinal scales (categories)</h2>
+    <code>d3.slider().scale(d3.scale.ordinal().domain(["Gecko", "Webkit", "Blink", "Trident"]).rangePoints([0, 1], 0.5)).axis( d3.svg.axis() ).snap(true).value("Gecko")</code>
+    <div id="slider12"></div>-->
+<!--<input type="button"  id="button1" />-->
+  </div>
+  <div class="column right" >
+    <h2>Raw Slide</h2>
+    <div id="openseadragon1" style="width: 500px; height: 500px;"></div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="/openseadragon/openseadragon.min.js"></script>
+<!--
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="/d3-simple-slider/d3.slider.js"></script>
+-->
+<script type="text/javascript">
+    var viewer = OpenSeadragon({
+        id: "openseadragon1",
+        prefixUrl: "/openseadragon/images/",
+        //tileSources: "/images/TestVIPS.dzi"
+        tileSources: "/slides/S11_A22-1_HE_CA.dzi"
+    });
+
+</script>
+
+
+<!--
+<input type="button" onclick="viewer.viewport.panTo(new OpenSeadragon.Point(.10,.20));">test</input><br/>
+-->
+
+<script type="text/javascript">
+
+function myFunction(p1, p2) {
+  return new OpenSeadragon.Point(Number(p1),Number(p2)); 
+  //return viewer.viewport.imageToViewportCoordinates((Number(p1),Number(p2))   // The function returns the product of p1 and p2
+};
+
+function myFunction2(z, x, y) {
+  viewer.viewport.zoomTo(4 * Number(z), myFunction(Number(x),Number(y)));
+  //return new OpenSeadragon.Point(Number(p1),Number(p2)); 
+  //return viewer.viewport.imageToViewportCoordinates((Number(p1),Number(p2))   // The function returns the product of p1 and p2
+};
+
+
+var image1 = document.getElementById("img1");
+var button = document.getElementById("button1");
+//var xx = document.getElementById("x").value
+button.onclick = function() {
+  viewer.viewport.goHome();
+  //var z =  document.getElementById("z").value;
+  var z =  document.querySelector('input[name="zoom"]:checked').value;
+  var x =  document.getElementById("x").value;
+  var y =  document.getElementById("y").value;
+  //var xy = viewer.viewport.imageToViewportCoordinates(Number(x),Number(y));
+  //alert(xy);
+  //point = myFunction(x,y)
+  //const point =  new OpenSeadragon.Point(.2,.3);
+  //var point =  new OpenSeadragon.Point(document.getElementById("x").value,.2);
+  //console.log(point,x.value,y.value);
+  //setTimeout(function() { myFunction2(z, x, y);}, 1000);
+  viewer.viewport.zoomTo(4 * Number(z));
+  viewer.viewport.panTo(myFunction(Number(x),Number(y)));
+
+  //viewer.viewport.zoomTo(4 * Number(z), myFunction(Number(x),Number(y)));
+  //viewer.viewport.zoomTo(Number(z), new OpenSeadragon.Point(.2,.3));
+  //viewer.viewport.zoomTo(Number(z), xy);
+};
+
+image1.onclick = function(){
+        //viewer.viewport.goHome();
+        bounds=this.getBoundingClientRect();
+        var left=bounds.left;
+        var top=bounds.top;
+        var x = event.pageX - left - 1;
+        var y = event.pageY - top - 1;
+        var cw=this.clientWidth;
+        var ch=this.clientHeight;
+        var iw=this.naturalWidth;
+        var ih=this.naturalHeight;
+        //var px=x/cw*iw;
+        //var py=y/ch*ih;
+        var px=x/cw;
+        var py=y/cw;
+        //var py=y/ch;
+        //var z =  document.getElementById("z").value;
+        var z =  document.querySelector('input[name="zoom"]:checked').value;
+        //viewer.viewport.zoomTo(4 * Number(z), myFunction(Number(px),Number(py)));
+        viewer.viewport.zoomTo(4 * Number(z));
+        viewer.viewport.panTo(myFunction(Number(px),Number(py)));
+        //setTimeout(function() { myFunction2(z, px, py);}, 500);
+        document.getElementById('x').value = px;
+        document.getElementById('y').value = py;
+        //alert("pixel ("+px+","+py+")");
+        //alert("click on "+this.tagName+" at pixel ("+px+","+py+") mouse pos ("+x+"," + y+ ") relative to boundingClientRect at ("+left+","+top+") client image size: "+cw+" x "+ch+" natural image size: "+iw+" x "+ih );
+};
+</script>
+<!--
+<script type="text/javascript">
+    d3.select('#slider12').scale(d3.scale.ordinal().domain(["Gecko", "Webkit", "Blink", "Trident"]).rangePoints([0, 1], 0.5)).axis(d3.svg.axis()).snap(true).value("Gecko");
+
+
+  </script>
+-->
+</form>
+  </div>
+</div>
+ 
+
+</body>
+</html>
